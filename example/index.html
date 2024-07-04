@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Example</title>
+    <script type="module">
+      import dommapper from '/dist/esm/index.js';
+
+      const frame = document.getElementById('frame');
+      dommapper(frame);
+    </script>
+    <style>
+      #frame {
+        border: 1px solid black;
+        background-color: lightgray;
+        padding: 10px;
+        width: 500px;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Example</h1>
+    <div id="frame">
+      Hi there!
+    </div>
+  </body>
+</html>
