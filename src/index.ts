@@ -8,7 +8,7 @@ export interface DomMapperOptions {
    * Array of 8 numbers to set initial x,y coordinates of projection points,
    * starting from top-left, continuing clockwise
    */
-  initialPoints?: [];
+  initialPoints?: Box;
 }
 
 export type Point = [number, number];
@@ -76,8 +76,10 @@ interface RegisteredElement {
 
 const handleMap = new Map<Element, { item: RegisteredElement, index: number }>();
 
+let tagNameIndex = 0;
+
 function dommapper(element: HTMLElement, options: DomMapperOptions = {}) {
-  const storageKey = options.key || element.id || element.tagName;
+  const storageKey = options.key || element.id || `${element.tagName}-${tagNameIndex++}`;
 
   const existingPoints = Store.getPoints(storageKey);
   const points = (existingPoints as Box) || options.initialPoints || getStartingPoints(element);

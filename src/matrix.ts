@@ -11,6 +11,7 @@ type Matrix4 = [
   number, number, number, number
 ];
 
+// adapted from https://math.stackexchange.com/a/339033
 function computeAdjugate(m: Matrix3): Matrix3 {
   return [
     m[4] * m[8] - m[5] * m[7],

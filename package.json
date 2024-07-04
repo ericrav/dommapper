@@ -1,5 +1,7 @@
 {
   "name": "dommapper",
+  "version": "0.1.0",
+  "license": "MIT",
   "packageManager": "yarn@4.3.1",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
