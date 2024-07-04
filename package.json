@@ -1,5 +1,5 @@
 {
-  "name": "dommapper",
+  "name": "@ericrav/dommapper",
   "version": "0.1.0",
   "license": "MIT",
   "packageManager": "yarn@4.3.1",

@@ -1,6 +1,11 @@
-<img src="dommapper.png">
+![DOM Mapper](dommapper.png)
 
-# dom mapper
+# DOM Mapper
+
+<a href="https://www.npmjs.com/package/@ericrav/dommapper">
+  <img src="https://img.shields.io/npm/v/@ericrav/dommapper">
+</a>
+
 
 Projection mapping in the browser for any DOM element, including p5.js and three.js canvases.
 
@@ -9,7 +14,7 @@ This library applies the `matrix3d` CSS transform to map any DOM element to a pr
 Transformations will be saved in local storage and re-applied on page load.
 
 ```js
-import dommapper from 'dommapper';
+import dommapper from '@ericrav/dommapper';
 
 const canvas = document.getElementById('canvas');
 dommapper(canvas);
@@ -34,11 +39,11 @@ document.addEventListener('keypress', (event) => {
 Usage with `npm` and modules:
 
 ```
-npm install dommapper
+npm install @ericrav/dommapper
 ```
 
 ```js
-import dommapper from 'dommapper';
+import dommapper from '@ericrav/dommapper';
 ```
 
 
