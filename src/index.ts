@@ -21,6 +21,7 @@ interface Item {
 
 const state = {
   dragging: false,
+  dragStart: [0, 0] as [number, number],
   handlesVisible: true,
 }
 
@@ -85,10 +86,15 @@ function dommapper(element: HTMLElement, options: DomMapperOptions = {}) {
     handleMap.set(handle, { item, index: i });
     handle.addEventListener('mousedown', (e) => {
       state.dragging = true;
-      document.querySelectorAll('.dommapper__handle--active').forEach((h) => {
-        h.classList.remove('dommapper__handle--active');
-      });
-      handle.classList.add('dommapper__handle--active');
+      state.dragStart = [e.pageX, e.pageY];
+      if (e.shiftKey || e.metaKey) {
+        handle.classList.toggle('dommapper__handle--active');
+      } else {
+        document.querySelectorAll('.dommapper__handle--active').forEach((h) => {
+          h.classList.remove('dommapper__handle--active');
+        });
+        handle.classList.add('dommapper__handle--active');
+      }
     });
   }
 
@@ -100,19 +106,31 @@ function dommapper(element: HTMLElement, options: DomMapperOptions = {}) {
   update3dTransform(element, points);
 }
 
-document.addEventListener('mousemove', (e) => {
-  const activeHandle = document.querySelector('.dommapper__handle--active') as HTMLElement;
-  if (!state.dragging || !activeHandle) {
-    return;
-  }
-  const { item, index } = handleMap.get(activeHandle)!;
-  const x = e.pageX;
-  const y = e.pageY;
+function updateHandle(handle: HTMLElement, dx: number, dy: number) {
+  const { item, index } = handleMap.get(handle)!;
+  const x = item.points[index] + dx;
+  const y = item.points[index + 1] + dy;
+  handle.style.left = `${x}px`;
+  handle.style.top = `${y}px`;
   item.points[index] = x;
   item.points[index + 1] = y;
-  activeHandle.style.left = `${x}px`;
-  activeHandle.style.top = `${y}px`;
+  handle.style.left = `${x}px`;
+  handle.style.top = `${y}px`;
   update3dTransform(item.element, item.points);
+}
+
+document.addEventListener('mousemove', (e) => {
+  const activeHandles = document.querySelectorAll('.dommapper__handle--active');
+  if (!state.dragging) {
+    return;
+  }
+
+  const dx = e.pageX - state.dragStart[0];
+  const dy = e.pageY - state.dragStart[1];
+  state.dragStart = [e.pageX, e.pageY];
+  activeHandles.forEach((h) => {
+    updateHandle(h as HTMLElement, dx, dy);
+  });
 });
 
 document.addEventListener('mouseup', () => {
@@ -126,30 +144,19 @@ document.addEventListener('keydown', (e) => {
     });
   }
 
-  const activeHandle = document.querySelector('.dommapper__handle--active') as HTMLElement;
+  const activeHandles = document.querySelectorAll('.dommapper__handle--active');
 
-  if (!activeHandle) return;
-
-  const { item, index } = handleMap.get(activeHandle)!;
-  let x = item.points[index];
-  let y = item.points[index + 1];
   const step = e.shiftKey ? 10 : 1;
-  if (e.key === 'ArrowUp') {
-    y -= step;
-  } else if (e.key === 'ArrowDown') {
-    y += step;
-  } else if (e.key === 'ArrowLeft') {
-    x -= step;
-  } else if (e.key === 'ArrowRight') {
-    x += step;
-  } else {
-    return;
+  const deltas = {
+    'ArrowUp': [0, -step] as [number, number],
+    'ArrowDown': [0, step] as [number, number],
+    'ArrowLeft': [-step, 0] as [number, number],
+    'ArrowRight': [step, 0] as [number, number],
+  }[e.key];
+
+  if (deltas) {
+    activeHandles.forEach((h) => updateHandle(h as HTMLElement, ...deltas));
   }
-  item.points[index] = x;
-  item.points[index + 1] = y;
-  activeHandle.style.left = `${x}px`;
-  activeHandle.style.top = `${y}px`;
-  update3dTransform(item.element, item.points);
 });
 
 
