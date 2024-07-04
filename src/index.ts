@@ -82,7 +82,7 @@ function dommapper(element: HTMLElement, options: DomMapperOptions = {}) {
     handle.style.left = `${points[i]}px`;
     handle.style.top = `${points[i + 1]}px`;
     document.body.appendChild(handle);
-    handleMap.set(handle, { item: { element, points, key: storageKey }, index: i });
+    handleMap.set(handle, { item, index: i });
     handle.addEventListener('mousedown', (e) => {
       state.dragging = true;
       document.querySelectorAll('.dommapper__handle--active').forEach((h) => {
@@ -117,6 +117,39 @@ document.addEventListener('mousemove', (e) => {
 
 document.addEventListener('mouseup', () => {
   state.dragging = false;
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.dommapper__handle--active').forEach((h) => {
+      h.classList.remove('dommapper__handle--active');
+    });
+  }
+
+  const activeHandle = document.querySelector('.dommapper__handle--active') as HTMLElement;
+
+  if (!activeHandle) return;
+
+  const { item, index } = handleMap.get(activeHandle)!;
+  let x = item.points[index];
+  let y = item.points[index + 1];
+  const step = e.shiftKey ? 10 : 1;
+  if (e.key === 'ArrowUp') {
+    y -= step;
+  } else if (e.key === 'ArrowDown') {
+    y += step;
+  } else if (e.key === 'ArrowLeft') {
+    x -= step;
+  } else if (e.key === 'ArrowRight') {
+    x += step;
+  } else {
+    return;
+  }
+  item.points[index] = x;
+  item.points[index + 1] = y;
+  activeHandle.style.left = `${x}px`;
+  activeHandle.style.top = `${y}px`;
+  update3dTransform(item.element, item.points);
 });
 
 
