@@ -33,8 +33,24 @@ export default [
     ],
   },
   {
+    input: 'src/global.ts',
+    output: {
+      file: 'dist/global.js',
+    },
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescript({ tsconfig: './tsconfig.json' }),
+    ],
+  },
+  {
     input: 'dist/esm/types/index.d.ts',
     output: [{ file: pkg.types, format: 'esm' }],
+    plugins: [dts()],
+  },
+  {
+    input: 'dist/types/global.d.ts',
+    output: [{ file: 'dist/global.d.ts', format: 'esm' }],
     plugins: [dts()],
   },
 ];

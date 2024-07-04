@@ -50,6 +50,10 @@ const stylesheet = /* css */`
   .dommapper__handle:hover, .dommapper__handle--active {
     background: blue;
   }
+
+  .dommapper__handles-hidden .dommapper__handle {
+    display: none;
+  }
 `;
 
 const style = document.createElement('style');
@@ -125,10 +129,20 @@ function update3dTransform(element: HTMLElement, points: Box) {
 
 dommapper.hideHandles = () => {
   state.handlesVisible = false;
+  document.body.classList.add('dommapper__handles-hidden');
 }
 
 dommapper.showHandles = () => {
   state.handlesVisible = true;
+  document.body.classList.remove('dommapper__handles-hidden');
+}
+
+dommapper.toggleHandles = () => {
+  if (state.handlesVisible) {
+    dommapper.hideHandles();
+  } else {
+    dommapper.showHandles();
+  }
 }
 
 export default dommapper;

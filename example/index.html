@@ -2,11 +2,18 @@
 <html>
   <head>
     <title>Example</title>
-    <script type="module">
-      import dommapper from '/dist/esm/index.js';
+    <script src="/dist/global.js"></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const frame = document.getElementById('frame');
+        dommapper(frame);
+      });
 
-      const frame = document.getElementById('frame');
-      dommapper(frame);
+      document.addEventListener('keypress', (event) => {
+        if (event.key === 'h') {
+          dommapper.toggleHandles();
+        }
+      });
     </script>
     <style>
       #frame {
