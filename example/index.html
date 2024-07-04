@@ -5,8 +5,10 @@
     <script src="/dist/global.js"></script>
     <script>
       window.addEventListener('DOMContentLoaded', () => {
-        const frame = document.getElementById('frame');
-        dommapper(frame);
+        const frame1 = document.getElementById('frame1');
+        const frame2 = document.getElementById('frame2');
+        dommapper(frame1);
+        dommapper(frame2);
       });
 
       document.addEventListener('keypress', (event) => {
@@ -16,18 +18,31 @@
       });
     </script>
     <style>
-      #frame {
+      .frame {
         border: 1px solid black;
-        background-color: lightgray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         padding: 10px;
         width: 500px;
         height: 300px;
+      }
+
+      #frame1 {
+        background-color: cornflowerblue;
+      }
+
+      #frame2 {
+        background-color: lightcoral;
       }
     </style>
   </head>
   <body>
     <h1>Example</h1>
-    <div id="frame">
+    <div class="frame" id="frame1">
+      Hi there!
+    </div>
+    <div class="frame" id="frame2">
       Hi there!
     </div>
   </body>

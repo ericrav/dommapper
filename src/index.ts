@@ -37,6 +37,7 @@ function getStartingPoints(element: Element): Box {
 
 const stylesheet = /* css */`
   .dommapper__handle {
+    user-select: auto;
     position: fixed;
     width: 10px;
     height: 10px;
@@ -44,16 +45,21 @@ const stylesheet = /* css */`
     border: 1px solid white;
     border-radius: 50%;
     cursor: move;
-    z-index: 100;
+    z-index: 99999;
     transform: translate(-50%, -50%);
   }
 
   .dommapper__handle:hover, .dommapper__handle--active {
     background: blue;
+    z-index: 999999;
   }
 
   .dommapper__handles-hidden .dommapper__handle {
     display: none;
+  }
+
+  .dommapper__dragging * {
+    user-select: none;
   }
 `;
 
@@ -87,6 +93,7 @@ function dommapper(element: HTMLElement, options: DomMapperOptions = {}) {
     handle.addEventListener('mousedown', (e) => {
       state.dragging = true;
       state.dragStart = [e.pageX, e.pageY];
+      document.body.classList.add('dommapper__dragging');
       if (e.shiftKey || e.metaKey) {
         handle.classList.toggle('dommapper__handle--active');
       } else {
@@ -120,11 +127,11 @@ function updateHandle(handle: HTMLElement, dx: number, dy: number) {
 }
 
 document.addEventListener('mousemove', (e) => {
-  const activeHandles = document.querySelectorAll('.dommapper__handle--active');
-  if (!state.dragging) {
+  if (!state.dragging || !state.handlesVisible) {
     return;
   }
 
+  const activeHandles = document.querySelectorAll('.dommapper__handle--active');
   const dx = e.pageX - state.dragStart[0];
   const dy = e.pageY - state.dragStart[1];
   state.dragStart = [e.pageX, e.pageY];
@@ -135,13 +142,41 @@ document.addEventListener('mousemove', (e) => {
 
 document.addEventListener('mouseup', () => {
   state.dragging = false;
+  document.body.classList.remove('dommapper__dragging');
+  storePoints();
 });
 
+function storePoints() {
+  const elements = new Set<HTMLElement>();
+  document.querySelectorAll('.dommapper__handle--active').forEach((h) => {
+    const { item } = handleMap.get(h)!;
+    if (!elements.has(item.element)) {
+      Store.setPoints(item.key, item.points);
+    }
+    elements.add(item.element);
+  });
+}
+
 document.addEventListener('keydown', (e) => {
+  if (!state.handlesVisible) {
+    return;
+  }
+
   if (e.key === 'Escape') {
     document.querySelectorAll('.dommapper__handle--active').forEach((h) => {
       h.classList.remove('dommapper__handle--active');
     });
+  }
+
+  if (e.key === 'Tab') {
+    const handles = Array.from(document.querySelectorAll('.dommapper__handle'));
+    const activeIndex = handles.findIndex((h) => h.classList.contains('dommapper__handle--active'));
+    const increment = e.shiftKey ? -1 : 1;
+    const nextIndex = (activeIndex + increment) % handles.length;
+    document.querySelectorAll('.dommapper__handle--active').forEach((h) => {
+      h.classList.remove('dommapper__handle--active');
+    });
+    handles[nextIndex].classList.add('dommapper__handle--active');
   }
 
   const activeHandles = document.querySelectorAll('.dommapper__handle--active');
@@ -156,6 +191,7 @@ document.addEventListener('keydown', (e) => {
 
   if (deltas) {
     activeHandles.forEach((h) => updateHandle(h as HTMLElement, ...deltas));
+    storePoints();
   }
 });
 
