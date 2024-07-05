@@ -36,7 +36,7 @@ document.addEventListener('keypress', (event) => {
 
 ## Installation
 
-Usage with `npm` and modules:
+### Usage with `npm` and modules
 
 ```
 npm install @ericrav/dommapper
@@ -46,6 +46,24 @@ npm install @ericrav/dommapper
 import dommapper from '@ericrav/dommapper';
 ```
 
+### Usage with a global script tag / p5.js
+
+Add script to your `index.html` file:
+```html
+<script src="https://www.unpkg.com/@ericrav/dommapper@latest/dist/global.js"></script>
+```
+
+In your JavaScript file:
+```js
+function setup() {
+  let canvas = createCanvas(400, 400);
+  dommapper(canvas.elt);
+  // uncomment when finished mapping projection
+  // dommapper.hideHandles();
+}
+```
+
+[p5.js web editor example](https://editor.p5js.org/edr7876/sketches/mA14ogVkJ)
 
 ## Usage
 
